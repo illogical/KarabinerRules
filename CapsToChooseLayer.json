@@ -1,0 +1,48 @@
+{
+  "description": "Caps leader -> choose layer -> launch apps",
+  "manipulators": [
+    {
+      "type": "basic",
+      "from": { "key_code": "caps_lock", "modifiers": { "optional": ["any"] } },
+      "to": [
+	      { "set_variable": { "name": "leader", "value": 1, "key_up_value": 0 } }
+      ],
+      "to_if_alone": [{ "key_code": "escape" }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "a", "modifiers": { "optional": ["any"] } },
+      "conditions": [{ "type": "variable_if", "name": "leader", "value": 1 }],
+      "to": [{ "set_variable": { "name": "layer", "value": "apps" } },
+      { "shell_command": "osascript -e 'display notification \"Apps Mode: ON\" with title \"Karabiner\"'" }]
+    },
+
+    {
+      "type": "basic",
+      "from": { "key_code": "n", "modifiers": { "optional": ["any"] } },
+      "conditions": [{ "type": "variable_if", "name": "layer", "value": "apps" }],
+      "to": [
+        { "software_function": { "open_application": { "bundle_identifier": "notion.id" } } },
+        { "set_variable": { "name": "layer", "value": 0 } }
+      ]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "v", "modifiers": { "optional": ["any"] } },
+      "conditions": [{ "type": "variable_if", "name": "layer", "value": "apps" }],
+      "to": [
+        { "software_function": { "open_application": { "bundle_identifier": "com.microsoft.VSCode" } } },
+        { "set_variable": { "name": "layer", "value": 0 } }
+      ]
+    },
+
+    {
+      "type": "basic",
+      "from": { "key_code": "escape", "modifiers": { "optional": ["any"] } },
+      "to": [
+	      { "set_variable": { "name": "layer", "value": 0 } },
+	      { "shell_command": "osascript -e 'display notification \"Apps Mode: OFF\" with title \"Karabiner\"'" }
+      ]
+    }
+  ]
+}
