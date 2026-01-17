@@ -14,7 +14,7 @@
       "from": { "key_code": "a", "modifiers": { "optional": ["any"] } },
       "conditions": [{ "type": "variable_if", "name": "leader", "value": 1 }],
       "to": [{ "set_variable": { "name": "layer", "value": "apps" } },
-      { "shell_command": "osascript -e 'display notification \"Apps Mode: ON\" with title \"Karabiner\"'" }]
+      { "shell_command": "osascript -e 'display notification \"Apps Mode ON\" with title \"Karabiner\"'" }]
     },
 
     {
@@ -39,9 +39,12 @@
     {
       "type": "basic",
       "from": { "key_code": "escape", "modifiers": { "optional": ["any"] } },
+      "conditions": [
+        { "type": "variable_if", "name": "layer", "value": "apps" }
+    ],
       "to": [
 	      { "set_variable": { "name": "layer", "value": 0 } },
-	      { "shell_command": "osascript -e 'display notification \"Apps Mode: OFF\" with title \"Karabiner\"'" }
+	      { "shell_command": "osascript -e 'display notification \"Apps Mode OFF\" with title \"Karabiner\"'" }
       ]
     }
   ]
