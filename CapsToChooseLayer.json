@@ -93,6 +93,40 @@
         { "key_code": "hyphen", "modifiers": ["control", "shift"] }
       ]
     },
+    { // Open Project/Folder Explorer
+      "type": "basic",
+      "from": { "key_code": "e", "modifiers": { "optional": ["any"] } },
+      "conditions": [{ "type": "variable_if", "name": "layer", "value": "vscode" }],
+      "to": [
+        { "key_code": "e", "modifiers": ["command", "shift"] }
+      ]
+    },
+    { // Search files
+      "type": "basic",
+      "from": { "key_code": "f", "modifiers": { "optional": ["any"] } },
+      "conditions": [{ "type": "variable_if", "name": "layer", "value": "vscode" }],
+      "to": [
+        { "key_code": "p", "modifiers": ["command"] },
+        { "set_variable": { "name": "layer", "value": 0 } }
+      ]
+    },
+    { // Open Github Source control
+      "type": "basic",
+      "from": { "key_code": "g", "modifiers": { "optional": ["any"] } },
+      "conditions": [{ "type": "variable_if", "name": "layer", "value": "vscode" }],
+      "to": [
+        { "key_code": "g", "modifiers": ["control", "shift"] }
+      ]
+    },
+    { // Search settings
+      "type": "basic",
+      "from": { "key_code": "s", "modifiers": { "optional": ["any"] } },
+      "conditions": [{ "type": "variable_if", "name": "layer", "value": "vscode" }],
+      "to": [
+        { "key_code": "p", "modifiers": ["command", "shift"] },
+        { "set_variable": { "name": "layer", "value": 0 } }
+      ]
+    },
 
     /* --- Exit/Cancel Modes --- */
 
@@ -100,10 +134,10 @@
       "type": "basic",
       "from": { "key_code": "escape", "modifiers": { "optional": ["any"] } },
       "conditions": [
-        { "type": "variable_unless", "name": "layer", "value": "0" }
+        { "type": "variable_unless", "name": "layer", "value": 0 }
       ],
       "to": [
-	      { "set_variable": { "name": "layer", "value": "0" } },
+	      { "set_variable": { "name": "layer", "value": 0 } },
 	      { "shell_command": "osascript -e 'display notification \"All Modes OFF\" with title \"Karabiner\"'" }
       ]
     }
