@@ -1,477 +1,473 @@
 {
-  "description": "Caps as app launcher + Tap for App-Specific Mode",
+  "description": "Caps as app launcher + Tap for layer-based app mode",
   "manipulators": [
     //
-    // 1. CAPS: dual-role key
-    //    - Held: sets caps_held = 1 while down (for Caps+letter combos)
-    //    - Tapped in VSCode: toggles vscode_mode 0 <-> 1
+    // 0. CONFIGURATION
+    //    - notifications_enabled: set to 1 for mode notifications, 0 to disable
+    //
+
+    {
+      "type": "basic",
+      "from": { "key_code": "f19" },
+      "to": [
+        { "set_variable": { "name": "notifications_enabled", "value": 1 } }
+      ]
+    },
+
+    //
+    // 1. CAPS LOCK - Dual-Role Key (Layer Toggle + App Launcher)
+    //    - Held: sets caps_held = 1 while down (for Caps+letter app launchers)
+    //    - Tapped in VSCode: toggles layer between 0 and "vscode"
+    //    - Tapped in Opera: toggles layer between 0 and "opera"
+    //    - Tapped in Vivaldi: toggles layer between 0 and "vivaldi"
     //    - Tapped elsewhere: sends Escape
     //
 
+    // VSCode: Enter mode (layer = 0 -> "vscode")
     {
       "type": "basic",
-      "from": {
-        "key_code": "caps_lock",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
+      "from": { "key_code": "caps_lock" },
       "conditions": [
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.microsoft\\.VSCode$"
-          ]
-        },
-        {
-          "type": "variable_if",
-          "name": "vscode_mode",
-          "value": 0
-        }
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"] },
+        { "type": "variable_if", "name": "layer", "value": 0 }
       ],
       "to": [
-        {
-          "set_variable": {
-            "name": "caps_held",
-            "value": 1,
-            "key_up_value": 0
-          }
-        }
+        { "set_variable": { "name": "caps_held", "value": 1, "key_up_value": 0 } }
       ],
       "to_if_alone": [
-        {
-          "set_variable": {
-            "name": "vscode_mode",
-            "value": 1
-          }
-        }
+        { "set_variable": { "name": "layer", "value": "vscode" } },
+        { "shell_command": "osascript -e 'display notification \"VSCode Mode Active\" with title \"Karabiner\"'" }
       ]
     },
 
+    // VSCode: Exit mode (layer = "vscode" -> 0)
     {
       "type": "basic",
-      "from": {
-        "key_code": "caps_lock",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
+      "from": { "key_code": "caps_lock" },
       "conditions": [
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.microsoft\\.VSCode$"
-          ]
-        },
-        {
-          "type": "variable_if",
-          "name": "vscode_mode",
-          "value": 1
-        }
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"] },
+        { "type": "variable_if", "name": "layer", "value": "vscode" }
       ],
       "to": [
-        {
-          "set_variable": {
-            "name": "caps_held",
-            "value": 1,
-            "key_up_value": 0
-          }
-        }
+        { "set_variable": { "name": "caps_held", "value": 1, "key_up_value": 0 } }
       ],
       "to_if_alone": [
-        {
-          "set_variable": {
-            "name": "vscode_mode",
-            "value": 0
-          }
-        }
+        { "set_variable": { "name": "layer", "value": 0 } },
+        { "shell_command": "osascript -e 'display notification \"Mode Off\" with title \"Karabiner\"'" }
       ]
     },
 
+    // Opera: Enter mode (layer = 0 -> "opera")
     {
       "type": "basic",
-      "from": {
-        "key_code": "caps_lock",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
+      "from": { "key_code": "caps_lock" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.operasoftware\\.Opera$"] },
+        { "type": "variable_if", "name": "layer", "value": 0 }
+      ],
+      "to": [
+        { "set_variable": { "name": "caps_held", "value": 1, "key_up_value": 0 } }
+      ],
+      "to_if_alone": [
+        { "set_variable": { "name": "layer", "value": "opera" } },
+        { "shell_command": "osascript -e 'display notification \"Opera Mode Active\" with title \"Karabiner\"'" }
+      ]
+    },
+
+    // Opera: Exit mode (layer = "opera" -> 0)
+    {
+      "type": "basic",
+      "from": { "key_code": "caps_lock" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.operasoftware\\.Opera$"] },
+        { "type": "variable_if", "name": "layer", "value": "opera" }
+      ],
+      "to": [
+        { "set_variable": { "name": "caps_held", "value": 1, "key_up_value": 0 } }
+      ],
+      "to_if_alone": [
+        { "set_variable": { "name": "layer", "value": 0 } },
+        { "shell_command": "osascript -e 'display notification \"Mode Off\" with title \"Karabiner\"'" }
+      ]
+    },
+
+    // Vivaldi: Enter mode (layer = 0 -> "vivaldi")
+    {
+      "type": "basic",
+      "from": { "key_code": "caps_lock" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.vivaldi\\.Vivaldi$"] },
+        { "type": "variable_if", "name": "layer", "value": 0 }
+      ],
+      "to": [
+        { "set_variable": { "name": "caps_held", "value": 1, "key_up_value": 0 } }
+      ],
+      "to_if_alone": [
+        { "set_variable": { "name": "layer", "value": "vivaldi" } },
+        { "shell_command": "osascript -e 'display notification \"Vivaldi Mode Active\" with title \"Karabiner\"'" }
+      ]
+    },
+
+    // Vivaldi: Exit mode (layer = "vivaldi" -> 0)
+    {
+      "type": "basic",
+      "from": { "key_code": "caps_lock" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.vivaldi\\.Vivaldi$"] },
+        { "type": "variable_if", "name": "layer", "value": "vivaldi" }
+      ],
+      "to": [
+        { "set_variable": { "name": "caps_held", "value": 1, "key_up_value": 0 } }
+      ],
+      "to_if_alone": [
+        { "set_variable": { "name": "layer", "value": 0 } },
+        { "shell_command": "osascript -e 'display notification \"Mode Off\" with title \"Karabiner\"'" }
+      ]
+    },
+
+    // Default: Caps Lock not in a configured app, or already in a mode
+    {
+      "type": "basic",
+      "from": { "key_code": "caps_lock" },
       "conditions": [
         {
           "type": "frontmost_application_unless",
           "bundle_identifiers": [
-            "^com\\.microsoft\\.VSCode$"
+            "^com\\.microsoft\\.VSCode$",
+            "^com\\.operasoftware\\.Opera$",
+            "^com\\.vivaldi\\.Vivaldi$"
           ]
         }
       ],
       "to": [
-        {
-          "set_variable": {
-            "name": "caps_held",
-            "value": 1,
-            "key_up_value": 0
-          }
-        }
+        { "set_variable": { "name": "caps_held", "value": 1, "key_up_value": 0 } }
       ],
       "to_if_alone": [
-        {
-          "key_code": "escape"
-        }
+        { "key_code": "escape" }
       ]
     },
 
     //
-    // 2. Caps+letter app launchers
-    //    Requires caps_held = 1
+    // 2. CAPS+letter - App Launchers
+    //    Requires caps_held = 1 (i.e., Caps is currently held down)
     //
 
     {
       "type": "basic",
-      "from": {
-        "key_code": "b",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
-      "conditions": [
-        {
-          "type": "variable_if",
-          "name": "caps_held",
-          "value": 1
-        }
-      ],
+      "from": { "key_code": "c" },
+      "conditions": [{ "type": "variable_if", "name": "caps_held", "value": 1 }],
       "to": [
-        {
-          "software_function": {
-            "open_application": {
-              "bundle_identifier": "com.vivaldi.Vivaldi"
-            }
-          }
-        }
+        { "software_function": { "open_application": { "bundle_identifier": "com.microsoft.VSCode" } } }
       ]
     },
     {
       "type": "basic",
-      "from": {
-        "key_code": "e",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
-      "conditions": [
-        {
-          "type": "variable_if",
-          "name": "caps_held",
-          "value": 1
-        }
-      ],
+      "from": { "key_code": "e" },
+      "conditions": [{ "type": "variable_if", "name": "caps_held", "value": 1 }],
       "to": [
-        {
-          "software_function": {
-            "open_application": {
-              "bundle_identifier": "com.evernote.Evernote"
-            }
-          }
-        }
+        { "software_function": { "open_application": { "bundle_identifier": "com.evernote.Evernote" } } }
       ]
     },
     {
       "type": "basic",
-      "from": {
-        "key_code": "n",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
-      "conditions": [
-        {
-          "type": "variable_if",
-          "name": "caps_held",
-          "value": 1
-        }
-      ],
+      "from": { "key_code": "n" },
+      "conditions": [{ "type": "variable_if", "name": "caps_held", "value": 1 }],
       "to": [
-        {
-          "software_function": {
-            "open_application": {
-              "bundle_identifier": "notion.id"
-            }
-          }
-        }
+        { "software_function": { "open_application": { "bundle_identifier": "notion.id" } } }
       ]
     },
     {
       "type": "basic",
-      "from": {
-        "key_code": "t",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
-      "conditions": [
-        {
-          "type": "variable_if",
-          "name": "caps_held",
-          "value": 1
-        }
-      ],
+      "from": { "key_code": "t" },
+      "conditions": [{ "type": "variable_if", "name": "caps_held", "value": 1 }],
       "to": [
-        {
-          "software_function": {
-            "open_application": {
-              "bundle_identifier": "com.apple.Terminal"
-            }
-          }
-        }
+        { "software_function": { "open_application": { "bundle_identifier": "com.apple.Terminal" } } }
       ]
     },
     {
       "type": "basic",
-      "from": {
-        "key_code": "v",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
-      "conditions": [
-        {
-          "type": "variable_if",
-          "name": "caps_held",
-          "value": 1
-        }
-      ],
+      "from": { "key_code": "v" },
+      "conditions": [{ "type": "variable_if", "name": "caps_held", "value": 1 }],
       "to": [
-        {
-          "software_function": {
-            "open_application": {
-              "bundle_identifier": "com.microsoft.VSCode"
-            }
-          }
-        }
+        { "software_function": { "open_application": { "bundle_identifier": "com.vivaldi.Vivaldi" } } }
+      ]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "z" },
+      "conditions": [{ "type": "variable_if", "name": "caps_held", "value": 1 }],
+      "to": [
+        { "software_function": { "open_application": { "bundle_identifier": "app.zen-browser.zen" } } }
       ]
     },
 
     //
-    // 3. VSCode mode keybindings (vscode_mode == 1, only in VSCode)
+    // 3. VSCode Mode Keybindings (layer == "vscode", only in VSCode)
     //
 
     {
       "type": "basic",
-      "from": {
-        "key_code": "left_arrow",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
+      "from": { "key_code": "left_arrow" },
       "conditions": [
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.microsoft\\.VSCode$"
-          ]
-        },
-        {
-          "type": "variable_if",
-          "name": "vscode_mode",
-          "value": 1
-        }
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"] },
+        { "type": "variable_if", "name": "layer", "value": "vscode" }
+      ],
+      "to": [{ "key_code": "hyphen", "modifiers": ["control"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "right_arrow" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"] },
+        { "type": "variable_if", "name": "layer", "value": "vscode" }
+      ],
+      "to": [{ "key_code": "hyphen", "modifiers": ["control", "shift"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "e" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"] },
+        { "type": "variable_if", "name": "layer", "value": "vscode" }
+      ],
+      "to": [{ "key_code": "e", "modifiers": ["command", "shift"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "f" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"] },
+        { "type": "variable_if", "name": "layer", "value": "vscode" }
       ],
       "to": [
-        {
-          "key_code": "hyphen",
-          "modifiers": ["control"]
-        }
+        { "key_code": "p", "modifiers": ["command"] },
+        { "set_variable": { "name": "layer", "value": 0 } }
       ]
     },
     {
       "type": "basic",
-      "from": {
-        "key_code": "right_arrow",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
+      "from": { "key_code": "g" },
       "conditions": [
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.microsoft\\.VSCode$"
-          ]
-        },
-        {
-          "type": "variable_if",
-          "name": "vscode_mode",
-          "value": 1
-        }
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"] },
+        { "type": "variable_if", "name": "layer", "value": "vscode" }
       ],
-      "to": [
-        {
-          "key_code": "hyphen",
-          "modifiers": ["control", "shift"]
-        }
-      ]
+      "to": [{ "key_code": "g", "modifiers": ["control", "shift"] }]
     },
     {
       "type": "basic",
-      "from": {
-        "key_code": "e",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
+      "from": { "key_code": "s" },
       "conditions": [
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.microsoft\\.VSCode$"
-          ]
-        },
-        {
-          "type": "variable_if",
-          "name": "vscode_mode",
-          "value": 1
-        }
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"] },
+        { "type": "variable_if", "name": "layer", "value": "vscode" }
       ],
       "to": [
-        {
-          "key_code": "e",
-          "modifiers": ["command", "shift"]
-        }
-      ]
-    },
-    {
-      "type": "basic",
-      "from": {
-        "key_code": "f",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
-      "conditions": [
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.microsoft\\.VSCode$"
-          ]
-        },
-        {
-          "type": "variable_if",
-          "name": "vscode_mode",
-          "value": 1
-        }
-      ],
-      "to": [
-        {
-          "key_code": "p",
-          "modifiers": ["command"]
-        },
-        {
-          "set_variable": {
-            "name": "vscode_mode",
-            "value": 0
-          }
-        }
-      ]
-    },
-    {
-      "type": "basic",
-      "from": {
-        "key_code": "g",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
-      "conditions": [
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.microsoft\\.VSCode$"
-          ]
-        },
-        {
-          "type": "variable_if",
-          "name": "vscode_mode",
-          "value": 1
-        }
-      ],
-      "to": [
-        {
-          "key_code": "g",
-          "modifiers": ["control", "shift"]
-        }
-      ]
-    },
-    {
-      "type": "basic",
-      "from": {
-        "key_code": "s",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
-      "conditions": [
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.microsoft\\.VSCode$"
-          ]
-        },
-        {
-          "type": "variable_if",
-          "name": "vscode_mode",
-          "value": 1
-        }
-      ],
-      "to": [
-        {
-          "key_code": "p",
-          "modifiers": ["command", "shift"]
-        },
-        {
-          "set_variable": {
-            "name": "vscode_mode",
-            "value": 0
-          }
-        }
+        { "key_code": "p", "modifiers": ["command", "shift"] },
+        { "set_variable": { "name": "layer", "value": 0 } }
       ]
     },
 
     //
-    // 4. Escape exits VSCode mode (and still sends real Escape)
+    // 4. Opera Mode Keybindings (layer == "opera", only in Opera)
     //
 
     {
       "type": "basic",
-      "from": {
-        "key_code": "escape",
-        "modifiers": {
-          "optional": ["any"]
-        }
-      },
+      "from": { "key_code": "left_arrow" },
       "conditions": [
-        {
-          "type": "frontmost_application_if",
-          "bundle_identifiers": [
-            "^com\\.microsoft\\.VSCode$"
-          ]
-        },
-        {
-          "type": "variable_if",
-          "name": "vscode_mode",
-          "value": 1
-        }
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.operasoftware\\.Opera$"] },
+        { "type": "variable_if", "name": "layer", "value": "opera" }
       ],
+      "to": [{ "key_code": "left_arrow", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "right_arrow" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.operasoftware\\.Opera$"] },
+        { "type": "variable_if", "name": "layer", "value": "opera" }
+      ],
+      "to": [{ "key_code": "right_arrow", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "f" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.operasoftware\\.Opera$"] },
+        { "type": "variable_if", "name": "layer", "value": "opera" }
+      ],
+      "to": [{ "key_code": "f", "modifiers": ["command", "control"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "t" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.operasoftware\\.Opera$"] },
+        { "type": "variable_if", "name": "layer", "value": "opera" }
+      ],
+      "to": [{ "key_code": "t", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "w" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.operasoftware\\.Opera$"] },
+        { "type": "variable_if", "name": "layer", "value": "opera" }
+      ],
+      "to": [{ "key_code": "w", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "r" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.operasoftware\\.Opera$"] },
+        { "type": "variable_if", "name": "layer", "value": "opera" }
+      ],
+      "to": [{ "key_code": "r", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "up_arrow" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.operasoftware\\.Opera$"] },
+        { "type": "variable_if", "name": "layer", "value": "opera" }
+      ],
+      "to": [{ "key_code": "equal_sign", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "down_arrow" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.operasoftware\\.Opera$"] },
+        { "type": "variable_if", "name": "layer", "value": "opera" }
+      ],
+      "to": [{ "key_code": "hyphen", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "z" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.operasoftware\\.Opera$"] },
+        { "type": "variable_if", "name": "layer", "value": "opera" }
+      ],
+      "to": [{ "key_code": "0", "modifiers": ["command"] }]
+    },
+
+    //
+    // 5. Vivaldi Mode Keybindings (layer == "vivaldi", only in Vivaldi)
+    //
+
+    {
+      "type": "basic",
+      "from": { "key_code": "left_arrow" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.vivaldi\\.Vivaldi$"] },
+        { "type": "variable_if", "name": "layer", "value": "vivaldi" }
+      ],
+      "to": [{ "key_code": "left_arrow", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "right_arrow" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.vivaldi\\.Vivaldi$"] },
+        { "type": "variable_if", "name": "layer", "value": "vivaldi" }
+      ],
+      "to": [{ "key_code": "right_arrow", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "t" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.vivaldi\\.Vivaldi$"] },
+        { "type": "variable_if", "name": "layer", "value": "vivaldi" }
+      ],
+      "to": [{ "key_code": "t", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "w" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.vivaldi\\.Vivaldi$"] },
+        { "type": "variable_if", "name": "layer", "value": "vivaldi" }
+      ],
+      "to": [{ "key_code": "w", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "r" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.vivaldi\\.Vivaldi$"] },
+        { "type": "variable_if", "name": "layer", "value": "vivaldi" }
+      ],
+      "to": [{ "key_code": "r", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "up_arrow" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.vivaldi\\.Vivaldi$"] },
+        { "type": "variable_if", "name": "layer", "value": "vivaldi" }
+      ],
+      "to": [{ "key_code": "equal_sign", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "down_arrow" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.vivaldi\\.Vivaldi$"] },
+        { "type": "variable_if", "name": "layer", "value": "vivaldi" }
+      ],
+      "to": [{ "key_code": "hyphen", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "z" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.vivaldi\\.Vivaldi$"] },
+        { "type": "variable_if", "name": "layer", "value": "vivaldi" }
+      ],
+      "to": [{ "key_code": "0", "modifiers": ["command"] }]
+    },
+
+    //
+    // 6. Universal Exit (Escape key exits any active layer)
+    //
+
+    {
+      "type": "basic",
+      "from": { "key_code": "escape" },
+      "conditions": [{ "type": "variable_unless", "name": "layer", "value": 0 }],
       "to": [
-        {
-          "set_variable": {
-            "name": "vscode_mode",
-            "value": 0
-          }
-        },
-        {
-          "key_code": "escape"
-        }
+        { "set_variable": { "name": "layer", "value": 0 } },
+        { "key_code": "escape" },
+        { "shell_command": "osascript -e 'display notification \"Mode Off\" with title \"Karabiner\"'" }
       ]
     }
-  ]
+  ],
+
+  //
+  // TEMPLATE: Adding a New App Mode
+  //
+  // To add a new app mode (e.g., Notion, Pixelmator, etc.), follow this pattern:
+  //
+  // Step 1: Add Caps Lock toggle rules (in section 1)
+  //   - Enter mode: app frontmost + layer = 0 + tap Caps -> set layer = "appname" + notify
+  //   - Exit mode: app frontmost + layer = "appname" + tap Caps -> set layer = 0 + notify
+  //   - Update Caps Lock "Default" rule to include bundle_identifier in frontmost_application_unless
+  //
+  // Step 2: Add app-specific keybindings (new section after Vivaldi)
+  //   - Condition 1: frontmost_application_if with app bundle_identifier
+  //   - Condition 2: variable_if with layer = "appname"
+  //   - Define key mappings as needed
+  //
+  // Step 3: Example for Notion:
+  //   - Bundle ID: notion.id
+  //   - Caps Lock toggle rules (enter/exit "notion" layer)
+  //   - Keybindings section with layer = "notion" conditions
+  //   - Consider: left_arrow/right_arrow for navigation, letters for commands
+  //
+  // Step 4: Update frontmost_application_unless in Caps Lock default rule
+  //   - Add "^notion\\.id$" to bundle_identifiers array
+  //
+  // "manipulators": []
 }
