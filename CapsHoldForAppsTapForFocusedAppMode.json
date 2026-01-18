@@ -376,6 +376,24 @@
     },
     {
       "type": "basic",
+      "from": { "key_code": "b" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.vivaldi\\.Vivaldi$"] },
+        { "type": "variable_if", "name": "layer", "value": "vivaldi" }
+      ],
+      "to": [{ "key_code": "b", "modifiers": ["command"] }]
+    },
+    {
+      "type": "basic",
+      "from": { "key_code": "f" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.vivaldi\\.Vivaldi$"] },
+        { "type": "variable_if", "name": "layer", "value": "vivaldi" }
+      ],
+      "to": [{ "key_code": "f", "modifiers": ["command", "control"] }]
+    },
+    {
+      "type": "basic",
       "from": { "key_code": "t" },
       "conditions": [
         { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.vivaldi\\.Vivaldi$"] },
@@ -429,6 +447,17 @@
       "to": [{ "key_code": "0", "modifiers": ["command"] }]
     },
 
+    {
+      "type": "basic",
+      "from": { "key_code": "spacebar" },
+      "conditions": [
+        { "type": "frontmost_application_if", "bundle_identifiers": ["^com\\.vivaldi\\.Vivaldi$"] },
+        { "type": "variable_if", "name": "layer", "value": "vivaldi" }
+      ],
+      "to": [{ "key_code": "e", "modifiers": ["command"] },
+      { "set_variable": { "name": "layer", "value": 0 } }]
+    },
+
     //
     // 6. Universal Exit (Escape key exits any active layer)
     //
@@ -443,9 +472,9 @@
         { "shell_command": "osascript -e 'display notification \"Mode Off\" with title \"Karabiner\"'" }
       ]
     }
-  ],
+  ]
 
-  //
+  /*
   // TEMPLATE: Adding a New App Mode
   //
   // To add a new app mode (e.g., Notion, Pixelmator, etc.), follow this pattern:
@@ -469,5 +498,6 @@
   // Step 4: Update frontmost_application_unless in Caps Lock default rule
   //   - Add "^notion\\.id$" to bundle_identifiers array
   //
-  // "manipulators": []
+  , "manipulators": []
+  */
 }
